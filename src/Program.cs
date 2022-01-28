@@ -1,18 +1,40 @@
+using AppRegAccessTests.Application.Common;
 using Microsoft.AspNetCore.Authentication.Negotiate;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.Identity.Web;
+using Microsoft.Identity.Web.UI;
 
 var builder = WebApplication.CreateBuilder(args);
+ConfigurationManager configuration = builder.Configuration;
 
 // Add services to the container.
 
-builder.Services.AddAuthentication(NegotiateDefaults.AuthenticationScheme)
-   .AddNegotiate();
+builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
+    .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"))
+    .EnableTokenAcquisitionToCallDownstreamApi()
+    .AddDownstreamWebApi(DownstreamWebApiNames.DocumentService,
+        configuration.GetSection("DownstreamWebApis:DocumentService"))
+    .AddDownstreamWebApi(DownstreamWebApiNames.DigiService, configuration.GetSection("DownstreamWebApis:DigiService"))
+    .AddInMemoryTokenCaches();
 
 builder.Services.AddAuthorization(options =>
 {
     // By default, all incoming requests will be authorized according to the default policy.
     options.FallbackPolicy = options.DefaultPolicy;
 });
+builder.Services.AddControllersWithViews(options =>
+{
+    var policy = new AuthorizationPolicyBuilder()
+        .RequireAuthenticatedUser()
+        .Build();
+    options.Filters.Add(new AuthorizeFilter(policy));
+}).AddMicrosoftIdentityUI();
+
 builder.Services.AddRazorPages();
+builder.Services.AddServerSideBlazor()
+    .AddMicrosoftIdentityConsentHandler();
 
 var app = builder.Build();
 
