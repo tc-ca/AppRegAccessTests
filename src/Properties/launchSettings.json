@@ -8,7 +8,7 @@
     }
   },
   "profiles": {
-    "AppServiceAccessTests": {
+    "AppRegAccessTests": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,

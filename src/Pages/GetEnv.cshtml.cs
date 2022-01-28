@@ -3,7 +3,7 @@ using Microsoft.Identity.Client;
 using System.Diagnostics;
 using System.Net.Http.Headers;
 
-namespace AppServiceAccessTests.Pages
+namespace AppRegAccessTests.Pages
 {
     public class GetEnvModel : PageModel
     {
