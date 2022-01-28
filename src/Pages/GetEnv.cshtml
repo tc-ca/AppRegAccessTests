@@ -4,4 +4,11 @@
     <h4>Environments</h4>
     <p>The digi sign environment is: <b>@Model.DigiSignEnv</b></p>
     <p>The document service environment is: <b>@Model.DocSvcEnv</b></p>
+    
+    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+    {
+        <br/>
+        <p>Test Image</p>
+        <img src="@Model.ImageUrl" alt="testImg" />
+    }
 }

@@ -14,14 +14,15 @@ namespace AppRegAccessTests.Pages
         }
         public string? DigiSignEnv { get; set; }
         public string? DocSvcEnv { get; private set; }
+        public string ImageUrl { get; set; }
 
         public async Task OnGetAsync()
         {
             DigiSignEnv = await GetDigiSignEnvironment();
-            DocSvcEnv = await GetDocSvcEnvironment();
+            DocSvcEnv = await GetDocSvcEnvironment(true);
         }
 
-        private async Task<string> GetDocSvcEnvironment()
+        private async Task<string> GetDocSvcEnvironment(bool getImage)
         {
             AuthenticationResult? result = null;
             IConfidentialClientApplication app;
@@ -29,9 +30,14 @@ namespace AppRegAccessTests.Pages
 
             string tenantId = _config["AzureAd:TenantId"];
             string resource = _config["AzureAd:Audience"] + "/.default";
+            string instance = _config["AzureAd:Instance"];
+            //Doc svc
+            //string clientId = _config["DocService:ClientId"];
+            //string clientSecret = _config["DocService:ClientSecret"];
+
+            //Mitrack svc
             string clientId = _config["DocService:ClientId"];
             string clientSecret = _config["DocService:ClientSecret"];
-            string instance = _config["AzureAd:Instance"];
 
             try
             {
@@ -39,7 +45,10 @@ namespace AppRegAccessTests.Pages
                 app = ConfidentialClientApplicationBuilder.Create(clientId)
                     .WithClientSecret(clientSecret)
                     .WithAuthority(new Uri(instance + tenantId)).Build();
-                string[] ResourceIds = { resource };
+                string[] ResourceIds = { resource
+                    //"https://034gc.onmicrosoft.com/ncd-dms-dev" + "/DocumentService.Read.All",
+                    //"https://034gc.onmicrosoft.com/ncd-dms-dev/DocumentService.CreateUpdate.All" + "/.default"
+            };
                 result = await app.AcquireTokenForClient(ResourceIds).ExecuteAsync();                
 
                 Debug.WriteLine(@"Token acquired \n"); 
@@ -61,6 +70,16 @@ namespace AppRegAccessTests.Pages
                 {
                     var content = await response.Content.ReadAsStringAsync(); using var responseStream = await response.Content.ReadAsStreamAsync();
                     env = await System.Text.Json.JsonSerializer.DeserializeAsync<string>(responseStream);
+                }
+
+                if (getImage)
+                {
+                    response = await client.GetAsync("/api/v1/documents/viewlink/8de99489-603f-4b4d-9b38-5d2761f15459");
+                    if (response.StatusCode == System.Net.HttpStatusCode.OK)
+                    {
+                        var content = await response.Content.ReadAsStringAsync(); using var responseStream = await response.Content.ReadAsStreamAsync();
+                        ImageUrl = await System.Text.Json.JsonSerializer.DeserializeAsync<string>(responseStream);
+                    }
                 }
             }
             catch (Exception ex)
