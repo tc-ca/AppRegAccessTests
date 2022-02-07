@@ -5,6 +5,13 @@
     <p>The digi sign environment is: <b>@Model.DigiSignEnv</b></p>
     <p>The document service environment is: <b>@Model.DocSvcEnv</b></p>
     
+    @if (!string.IsNullOrEmpty(Model.PostedImageId))
+    {
+        <br/>
+        <p>Posted Image</p>
+        <p>@Model.PostedImageId</p>
+    }
+
     @if (!string.IsNullOrEmpty(Model.ImageUrl))
     {
         <br/>
