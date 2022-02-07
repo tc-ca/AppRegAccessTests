@@ -5,7 +5,6 @@ D:\source\repos\AppRegAccessTests\src\bin\Debug\net6.0\AppRegAccessTests.exe
 D:\source\repos\AppRegAccessTests\src\bin\Debug\net6.0\AppRegAccessTests.deps.json
 D:\source\repos\AppRegAccessTests\src\bin\Debug\net6.0\AppRegAccessTests.runtimeconfig.json
 D:\source\repos\AppRegAccessTests\src\bin\Debug\net6.0\AppRegAccessTests.dll
-D:\source\repos\AppRegAccessTests\src\bin\Debug\net6.0\ref\AppRegAccessTests.dll
 D:\source\repos\AppRegAccessTests\src\bin\Debug\net6.0\AppRegAccessTests.pdb
 D:\source\repos\AppRegAccessTests\src\bin\Debug\net6.0\Azure.Core.dll
 D:\source\repos\AppRegAccessTests\src\bin\Debug\net6.0\Azure.Identity.dll
@@ -61,3 +60,4 @@ D:\source\repos\AppRegAccessTests\src\obj\Debug\net6.0\AppRegAccessTests.dll
 D:\source\repos\AppRegAccessTests\src\obj\Debug\net6.0\ref\AppRegAccessTests.dll
 D:\source\repos\AppRegAccessTests\src\obj\Debug\net6.0\AppRegAccessTests.pdb
 D:\source\repos\AppRegAccessTests\src\obj\Debug\net6.0\AppRegAccessTests.genruntimeconfig.cache
+D:\source\repos\AppRegAccessTests\src\obj\Debug\net6.0\refint\AppRegAccessTests.dll
