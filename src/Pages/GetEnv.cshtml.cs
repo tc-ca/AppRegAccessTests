@@ -1,10 +1,9 @@
 using AppRegAccessTests.Models;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Identity.Client;
+using Microsoft.Identity.Web;
 using System.Diagnostics;
 using System.Net.Http.Headers;
-using AppRegAccessTests.Application.Common;
-using Microsoft.Identity.Web;
 
 namespace AppRegAccessTests.Pages
 {
@@ -51,7 +50,6 @@ namespace AppRegAccessTests.Pages
             
             try
             {
-
                 app = ConfidentialClientApplicationBuilder.Create(clientId)
                     .WithClientSecret(clientSecret)
                     .WithAuthority(new Uri(instance + tenantId)).Build();
@@ -63,7 +61,7 @@ namespace AppRegAccessTests.Pages
 
                 using var client = new HttpClient();
 
-                // This returns 403 forbidden: 
+                // This returns 403 forbidden - fixed by removing scope attributes on api action: 
                 client.BaseAddress = new Uri(baseUrl);
 
                 // This works. Clone and run this locally https://github.com/tc-ca/DocumentService.git comment out attribute: //[RequiredScope(RequiredScopesConfigurationKey = ScopePolicy.ReadWritePermission)]
@@ -113,7 +111,7 @@ namespace AppRegAccessTests.Pages
         private async Task<string> GetDigiSignEnvironment()
         {
             AuthenticationResult? result = null;
-            IConfidentialClientApplication app;*/
+            IConfidentialClientApplication app;
             string? env = string.Empty;
 
             string tenantId = _config["AzureAd:TenantId"];
@@ -145,15 +143,7 @@ namespace AppRegAccessTests.Pages
                 {
                     var content = await response.Content.ReadAsStringAsync(); using var responseStream = await response.Content.ReadAsStreamAsync();
                     env = await System.Text.Json.JsonSerializer.DeserializeAsync<string>(responseStream);
-                }
-                
-                var response = await _downstreamWebApi.CallWebApiForUserAsync(WebApiNames.DocumentService, options =>
-                {
-                    options.HttpMethod = HttpMethod.Get;
-                    options.RelativePath = "/CurrentEnvironment";
-                });
-                var jsonContent = await response.Content.ReadAsStringAsync();
-                env = jsonContent;
+                }                
             }
             catch (Exception ex)
             {

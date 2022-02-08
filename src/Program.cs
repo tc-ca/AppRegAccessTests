@@ -11,13 +11,13 @@ ConfigurationManager configuration = builder.Configuration;
 
 // Add services to the container.
 
-builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
-    .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"))
-    .EnableTokenAcquisitionToCallDownstreamApi()
-    .AddDownstreamWebApi(DownstreamWebApiNames.DocumentService,
-        configuration.GetSection("DownstreamWebApis:DocumentService"))
-    .AddDownstreamWebApi(DownstreamWebApiNames.DigiService, configuration.GetSection("DownstreamWebApis:DigiService"))
-    .AddInMemoryTokenCaches();
+//builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
+//    .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"))
+//    .EnableTokenAcquisitionToCallDownstreamApi()
+//    .AddDownstreamWebApi(DownstreamWebApiNames.DocumentService,
+//        configuration.GetSection("DownstreamWebApis:DocumentService"))
+//    .AddDownstreamWebApi(DownstreamWebApiNames.DigiService, configuration.GetSection("DownstreamWebApis:DigiService"))
+//    .AddInMemoryTokenCaches();
 
 builder.Services.AddAuthorization(options =>
 {
