@@ -3,28 +3,21 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Identity.Client;
 using System.Diagnostics;
 using System.Net.Http.Headers;
-using AppRegAccessTests.Application.Common;
-using Microsoft.Identity.Web;
 
 namespace AppRegAccessTests.Pages
 {
     public class GetEnvModel : PageModel
     {
-        private readonly IDownstreamWebApi _downstreamWebApi;
-        private readonly MicrosoftIdentityConsentAndConditionalAccessHandler _conditionalAccessHandler;
         private readonly IConfiguration _config;
-        public GetEnvModel(IConfiguration config, IDownstreamWebApi downstreamWebApi, 
-            MicrosoftIdentityConsentAndConditionalAccessHandler conditionalAccessHandler)
+        public GetEnvModel(IConfiguration config)
         {
             _config = config;
-            _downstreamWebApi = downstreamWebApi;
-            _conditionalAccessHandler = conditionalAccessHandler;
         }
         public string? DigiSignEnv { get; set; }
         public string? DocSvcEnv { get; private set; }
         public string ImageUrl { get; set; }
         public string PostedImageId { get; set; }
-        
+
         public async Task OnGetAsync()
         {
             DigiSignEnv = await GetDigiSignEnvironment();
@@ -48,10 +41,9 @@ namespace AppRegAccessTests.Pages
             //Mitrack svc
             //string clientId = _config["DocService:ClientId"];
             //string clientSecret = _config["DocService:ClientSecret"];
-            
+
             try
             {
-
                 app = ConfidentialClientApplicationBuilder.Create(clientId)
                     .WithClientSecret(clientSecret)
                     .WithAuthority(new Uri(instance + tenantId)).Build();
@@ -104,7 +96,6 @@ namespace AppRegAccessTests.Pages
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
-                _conditionalAccessHandler.HandleException(ex);
             }
 
             return env;
@@ -113,7 +104,7 @@ namespace AppRegAccessTests.Pages
         private async Task<string> GetDigiSignEnvironment()
         {
             AuthenticationResult? result = null;
-            IConfidentialClientApplication app;*/
+            IConfidentialClientApplication app;
             string? env = string.Empty;
 
             string tenantId = _config["AzureAd:TenantId"];
@@ -146,19 +137,10 @@ namespace AppRegAccessTests.Pages
                     var content = await response.Content.ReadAsStringAsync(); using var responseStream = await response.Content.ReadAsStreamAsync();
                     env = await System.Text.Json.JsonSerializer.DeserializeAsync<string>(responseStream);
                 }
-                
-                var response = await _downstreamWebApi.CallWebApiForUserAsync(WebApiNames.DocumentService, options =>
-                {
-                    options.HttpMethod = HttpMethod.Get;
-                    options.RelativePath = "/CurrentEnvironment";
-                });
-                var jsonContent = await response.Content.ReadAsStringAsync();
-                env = jsonContent;
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
-                _conditionalAccessHandler.HandleException(ex);
             }
             
             return env;
